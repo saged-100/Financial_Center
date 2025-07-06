@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAGED - متابعة الحسابات الدراسية</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            min-height: 100vh;
+            color: #fff;
+        }
+        
+        .header {
+            background: rgba(44, 62, 80, 0.95);
+            padding: 15px 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #fff;
+            background: #e67e22;
+            padding: 8px 16px;
+            border-radius: 8px;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .nav-btn {
+            background: #e67e22;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .nav-btn:hover {
+            background: #d35400;
+            transform: translateY(-2px);
+        }
+        
+        .nav-btn.active {
+            background: #c0392b;
+        }
+        
+        .main-content {
+            margin-top: 80px;
+            padding: 40px 20px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .hero-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: center;
+            min-height: 500px;
+            margin-bottom: 60px;
+        }
+        
+        .hero-text {
+            padding: 20px;
+        }
+        
+        .hero-title {
+            font-size: 48px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+        
+        .hero-subtitle {
+            font-size: 24px;
+            color: #bdc3c7;
+            margin-bottom: 30px;
+            line-height: 1.4;
+        }
+        
+        .hero-description {
+            font-size: 16px;
+            color: #95a5a6;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        
+        .cta-button {
+            background: linear-gradient(45deg, #e67e22, #f39c12);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: 0 10px 20px rgba(230, 126, 34, 0.3);
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(230, 126, 34, 0.4);
+        }
+        
+        .hero-image {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        
+        .illustration {
+            width: 100%;
+            max-width: 400px;
+            height: 300px;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .person {
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 80px;
+            background: #f39c12;
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            z-index: 2;
+        }
+        
+        .person::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 60px;
+            background: #e67e22;
+            border-radius: 50%;
+        }
+        
+        .laptop {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 60px;
+            background: #ecf0f1;
+            border-radius: 5px;
+            z-index: 1;
+        }
+        
+        .laptop::before {
+            content: '';
+            position: absolute;
+            top: -40px;
+            left: 0;
+            width: 100%;
+            height: 40px;
+            background: #34495e;
+            border-radius: 5px 5px 0 0;
+        }
+        
+        .desk-lamp {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            width: 60px;
+            height: 120px;
+        }
+        
+        .lamp-base {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 10px;
+            background: #34495e;
+            border-radius: 15px;
+        }
+        
+        .lamp-arm {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%) rotate(-30deg);
+            width: 3px;
+            height: 60px;
+            background: #34495e;
+            transform-origin: bottom;
+        }
+        
+        .lamp-head {
+            position: absolute;
+            top: 0;
+            right: -10px;
+            width: 20px;
+            height: 15px;
+            background: #3498db;
+            border-radius: 10px 10px 0 0;
+        }
+        
+        .light-glow {
+            position: absolute;
+            top: 50px;
+            right: 50px;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, rgba(241, 196, 15, 0.3) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        
+        .content-section {
+            background: rgba(44, 62, 80, 0.8);
+            padding: 40px;
+            border-radius: 20px;
+            margin-bottom: 40px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .section-title {
+            font-size: 28px;
+            color: #fff;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .section-text {
+            font-size: 16px;
+            color: #bdc3c7;
+            line-height: 1.6;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .footer {
+            background: rgba(44, 62, 80, 0.95);
+            padding: 20px 0;
+            text-align: center;
+            color: #95a5a6;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .color-palette {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .color-box {
+            width: 40px;
+            height: 40px;
+            border-radius: 5px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .color-1 { background: #2c3e50; }
+        .color-2 { background: #34495e; }
+        .color-3 { background: #e67e22; }
+        .color-4 { background: #f39c12; }
+        .color-5 { background: #3498db; }
+        
+        @media (max-width: 768px) {
+            .hero-section {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .hero-title {
+                font-size: 36px;
+            }
+            
+            .hero-subtitle {
+                font-size: 20px;
+            }
+            
+            .nav-buttons {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">SAGED</div>
+            <div class="nav-buttons">
+                <a href="/" class="nav-btn active">الرئيسية</a>
+                <a href="/accounts.html" class="nav-btn" id="accounts-link">مركز الحسابات</a>
+                <a href="/dashboard.html" class="nav-btn editor-only" id="dashboard-link" style="display: none;">مركز التحكم</a>
+                <a href="/statistics.html" class="nav-btn editor-only" id="statistics-link" style="display: none;">الإحصائيات</a>
+                <a href="/logout" class="nav-btn">تسجيل الخروج</a>
+            </div>
+        </div>
+    </header>
+    
+    <main class="main-content">
+        <section class="hero-section">
+            <div class="hero-text">
+                <h1 class="hero-title">SAGED</h1>
+                <h2 class="hero-subtitle">نظام متابعة الحسابات الدراسية</h2>
+                <p class="hero-description">
+                    تم إنشاء الموقع من أجل متابعة الحسابات الدراسية لـ SAGED. 
+                    نظام شامل لإدارة ومتابعة المدفوعات والحسابات الدراسية بطريقة سهلة وفعالة.
+                </p>
+                <a href="/accounts.html" class="cta-button">الذهاب للحسابات</a>
+            </div>
+            <div class="hero-image">
+                <div class="illustration">
+                    <div class="desk-lamp">
+                        <div class="lamp-base"></div>
+                        <div class="lamp-arm"></div>
+                        <div class="lamp-head"></div>
+                    </div>
+                    <div class="light-glow"></div>
+                    <div class="person"></div>
+                    <div class="laptop"></div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="content-section">
+            <h3 class="section-title">مميزات النظام</h3>
+            <p class="section-text">
+                في زمن كثرت فيه الشهوات والثقافات والمليارات وانتصرت فيه بيئة الإيمان وذكرت فيه 
+                الشبهات والمشتتاتكان لابد من وجود ضمن يحتمي الإنسان فيه ويتدارس فيه علوم دينه من 
+                أجل أن يكون ذو وعي وإدراك فيستطيع زعم تلك التيارأو حماية مجتمعة أو على الأقل حماية 
+                نفسه منها.
+            </p>
+        </section>
+    </main>
+    
+    <footer class="footer">
+        <div class="logo">SAGED</div>
+        <p>copyright 2025</p>
+        <div class="color-palette">
+            <div class="color-box color-1"></div>
+            <div class="color-box color-2"></div>
+            <div class="color-box color-3"></div>
+            <div class="color-box color-4"></div>
+            <div class="color-box color-5"></div>
+        </div>
+    </footer>
+    
+    <script>
+        // Check user role and show/hide navigation links
+        fetch('/api/user-role')
+            .then(response => response.json())
+            .then(data => {
+                if (data.role === 'editor') {
+                    document.querySelectorAll('.editor-only').forEach(el => {
+                        el.style.display = 'inline-block';
+                    });
+                }
+            })
+            .catch(error => console.log('Error fetching user role:', error));
+    </script>
+</body>
+</html>
+
+

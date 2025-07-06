@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الإحصائيات - SAGED</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            min-height: 100vh;
+            color: #fff;
+        }
+        
+        .header {
+            background: rgba(44, 62, 80, 0.95);
+            padding: 15px 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #fff;
+            background: #e67e22;
+            padding: 8px 16px;
+            border-radius: 8px;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .nav-btn {
+            background: #e67e22;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .nav-btn:hover {
+            background: #d35400;
+            transform: translateY(-2px);
+        }
+        
+        .nav-btn.active {
+            background: #c0392b;
+        }
+        
+        .main-content {
+            margin-top: 80px;
+            padding: 40px 20px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .page-title {
+            font-size: 36px;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+        
+        .page-subtitle {
+            font-size: 18px;
+            color: #bdc3c7;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .stat-card {
+            background: rgba(44, 62, 80, 0.8);
+            padding: 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+        }
+        
+        .stat-title {
+            font-size: 18px;
+            color: #bdc3c7;
+            margin-bottom: 15px;
+        }
+        
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .stat-value.total {
+            color: #3498db;
+        }
+        
+        .stat-value.paid {
+            color: #27ae60;
+        }
+        
+        .stat-value.unpaid {
+            color: #e74c3c;
+        }
+        
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .chart-container {
+            background: rgba(44, 62, 80, 0.8);
+            padding: 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .chart-title {
+            font-size: 20px;
+            color: #fff;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .chart-canvas {
+            max-height: 300px;
+        }
+        
+        .users-management {
+            background: rgba(44, 62, 80, 0.8);
+            padding: 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .users-title {
+            font-size: 24px;
+            color: #fff;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .user-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        
+        .user-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .user-info {
+            flex: 1;
+        }
+        
+        .user-email {
+            font-size: 16px;
+            color: #fff;
+            margin-bottom: 5px;
+        }
+        
+        .user-role {
+            font-size: 14px;
+            color: #bdc3c7;
+        }
+        
+        .edit-button {
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .edit-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-content {
+            background: rgba(44, 62, 80, 0.95);
+            margin: 10% auto;
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        }
+        
+        .modal-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .modal-title {
+            font-size: 24px;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #bdc3c7;
+            font-weight: 500;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #e67e22;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .modal-button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .save-button {
+            background: linear-gradient(45deg, #27ae60, #2ecc71);
+            color: white;
+        }
+        
+        .cancel-button {
+            background: #95a5a6;
+            color: white;
+        }
+        
+        .save-button:hover {
+            transform: translateY(-1px);
+        }
+        
+        .cancel-button:hover {
+            background: #7f8c8d;
+            transform: translateY(-1px);
+        }
+        
+        @media (max-width: 768px) {
+            .nav-buttons {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .page-title {
+                font-size: 28px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .user-item {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">SAGED</div>
+            <div class="nav-buttons">
+                <a href="/" class="nav-btn">الرئيسية</a>
+                <a href="/accounts.html" class="nav-btn">مركز الحسابات</a>
+                <a href="/dashboard.html" class="nav-btn">مركز التحكم</a>
+                <a href="/statistics.html" class="nav-btn active">الإحصائيات</a>
+                <a href="/logout" class="nav-btn">تسجيل الخروج</a>
+            </div>
+        </div>
+    </header>
+    
+    <main class="main-content">
+        <div class="page-header">
+            <h1 class="page-title">الإحصائيات</h1>
+            <p class="page-subtitle">عرض إحصائيات شاملة للحسابات الدراسية</p>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-title">إجمالي المبالغ</div>
+                <div class="stat-value total" id="total-amount">0 جنيه</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-title">إجمالي المبالغ المدفوعة</div>
+                <div class="stat-value paid" id="paid-amount">0 جنيه</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-title">إجمالي المبالغ غير المدفوعة</div>
+                <div class="stat-value unpaid" id="unpaid-amount">0 جنيه</div>
+            </div>
+        </div>
+        
+        <div class="charts-grid">
+            <div class="chart-container">
+                <h3 class="chart-title">إحصائيات المواد</h3>
+                <canvas id="subjectsChart" class="chart-canvas"></canvas>
+            </div>
+            <div class="chart-container">
+                <h3 class="chart-title">توزيع المدفوعات</h3>
+                <canvas id="paymentsChart" class="chart-canvas"></canvas>
+            </div>
+        </div>
+        
+        <div class="users-management">
+            <h3 class="users-title">إدارة المستخدمين</h3>
+            <div id="users-list">
+                <div class="user-item">
+                    <div class="user-info">
+                        <div class="user-email">sagedmedhat1@gmail.com</div>
+                        <div class="user-role">محرر</div>
+                    </div>
+                    <button class="edit-button" onclick="editUser('sagedmedhat1@gmail.com', 'editor')">تعديل</button>
+                </div>
+                <div class="user-item">
+                    <div class="user-info">
+                        <div class="user-email">omsaged2014@gmail.com</div>
+                        <div class="user-role">مستخدم</div>
+                    </div>
+                    <button class="edit-button" onclick="editUser('omsaged2014@gmail.com', 'user')">تعديل</button>
+                </div>
+                <div class="user-item">
+                    <div class="user-info">
+                        <div class="user-email">medhatmoh070@gmail.com</div>
+                        <div class="user-role">مستخدم</div>
+                    </div>
+                    <button class="edit-button" onclick="editUser('medhatmoh070@gmail.com', 'user')">تعديل</button>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Edit User Modal -->
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">تعديل بيانات المستخدم</h3>
+            </div>
+            <form id="edit-form">
+                <div class="form-group">
+                    <label for="edit-email">البريد الإلكتروني:</label>
+                    <input type="email" id="edit-email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-password">كلمة المرور الجديدة:</label>
+                    <input type="password" id="edit-password" name="password" placeholder="اتركها فارغة إذا لم ترد التغيير">
+                </div>
+                <div class="modal-buttons">
+                    <button type="submit" class="modal-button save-button">حفظ</button>
+                    <button type="button" class="modal-button cancel-button" onclick="closeEditModal()">إلغاء</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        let currentEditingUser = null;
+        let subjectsChart = null;
+        let paymentsChart = null;
+        
+        function editUser(email, role) {
+            currentEditingUser = { email, role };
+            document.getElementById('edit-email').value = email;
+            document.getElementById('edit-password').value = '';
+            document.getElementById('edit-modal').style.display = 'block';
+        }
+        
+        function closeEditModal() {
+            document.getElementById('edit-modal').style.display = 'none';
+            document.getElementById('edit-form').reset();
+            currentEditingUser = null;
+        }
+        
+        document.getElementById('edit-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const newEmail = document.getElementById('edit-email').value;
+            const newPassword = document.getElementById('edit-password').value;
+            
+            const updateData = {
+                old_email: currentEditingUser.email,
+                new_email: newEmail,
+                role: currentEditingUser.role
+            };
+            
+            if (newPassword) {
+                updateData.new_password = newPassword;
+            }
+            
+            fetch('/api/update-user', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(updateData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('تم تحديث بيانات المستخدم بنجاح!');
+                    closeEditModal();
+                    location.reload(); // Reload to update the display
+                } else {
+                    alert('حدث خطأ أثناء التحديث: ' + (data.message || ''));
+                }
+            })
+            .catch(error => {
+                console.error('Error updating user:', error);
+                alert('حدث خطأ أثناء التحديث');
+            });
+        });
+        
+        function loadStatistics() {
+            fetch('/api/accounts')
+                .then(response => response.json())
+                .then(data => {
+                    const accounts = data.accounts || [];
+                    
+                    const total = accounts.reduce((sum, account) => sum + account.price, 0);
+                    const paid = accounts.filter(account => account.paid).reduce((sum, account) => sum + account.price, 0);
+                    const unpaid = total - paid;
+                    
+                    document.getElementById('total-amount').textContent = `${total} جنيه`;
+                    document.getElementById('paid-amount').textContent = `${paid} جنيه`;
+                    document.getElementById('unpaid-amount').textContent = `${unpaid} جنيه`;
+
+                    // Subjects Chart
+                    const subjectCounts = {};
+                    accounts.forEach(account => {
+                        subjectCounts[account.subject] = (subjectCounts[account.subject] || 0) + 1;
+                    });
+
+                    const subjectsCtx = document.getElementById('subjectsChart').getContext('2d');
+                    if (subjectsChart) subjectsChart.destroy();
+                    subjectsChart = new Chart(subjectsCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: Object.keys(subjectCounts),
+                            datasets: [{
+                                label: 'عدد الحسابات لكل مادة',
+                                data: Object.values(subjectCounts),
+                                backgroundColor: 'rgba(52, 152, 219, 0.6)',
+                                borderColor: 'rgba(52, 152, 219, 1)',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        color: '#bdc3c7'
+                                    },
+                                    grid: {
+                                        color: 'rgba(255, 255, 255, 0.1)'
+                                    }
+                                },
+                                x: {
+                                    ticks: {
+                                        color: '#bdc3c7'
+                                    },
+                                    grid: {
+                                        color: 'rgba(255, 255, 255, 0.1)'
+                                    }
+                                }
+                            },
+                            plugins: {
+                                legend: {
+                                    labels: {
+                                        color: '#fff'
+                                    }
+                                }
+                            }
+                        }
+                    });
+
+                    // Payments Chart
+                    const paymentData = {
+                        paid: accounts.filter(account => account.paid).length,
+                        unpaid: accounts.filter(account => !account.paid).length
+                    };
+
+                    const paymentsCtx = document.getElementById('paymentsChart').getContext('2d');
+                    if (paymentsChart) paymentsChart.destroy();
+                    paymentsChart = new Chart(paymentsCtx, {
+                        type: 'pie',
+                        data: {
+                            labels: ['مدفوع', 'غير مدفوع'],
+                            datasets: [{
+                                data: [paymentData.paid, paymentData.unpaid],
+                                backgroundColor: ['rgba(39, 174, 96, 0.6)', 'rgba(231, 76, 60, 0.6)'],
+                                borderColor: ['rgba(39, 174, 96, 1)', 'rgba(231, 76, 60, 1)'],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    labels: {
+                                        color: '#fff'
+                                    }
+                                }
+                            }
+                        }
+                    });
+                })
+                .catch(error => {
+                    console.error('Error loading statistics:', error);
+                });
+        }
+
+        // Check user role and show/hide navigation links
+        fetch('/api/user-role')
+            .then(response => response.json())
+            .then(data => {
+                if (data.role === 'editor') {
+                    document.querySelectorAll('.editor-only').forEach(el => {
+                        el.style.display = 'inline-block';
+                    });
+                }
+            })
+            .catch(error => console.log('Error fetching user role:', error));
+
+        // Load statistics on page load
+        loadStatistics();
+    </script>
+</body>
+</html>
+

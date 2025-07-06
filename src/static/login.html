@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول - SAGED</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+        }
+        
+        .login-container {
+            background: rgba(44, 62, 80, 0.9);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .logo h1 {
+            font-size: 32px;
+            font-weight: bold;
+            color: #e67e22;
+            margin-bottom: 10px;
+        }
+        
+        .logo p {
+            color: #bdc3c7;
+            font-size: 14px;
+        }
+        
+        .login-title {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #fff;
+            font-size: 24px;
+        }
+        
+        .login-subtitle {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #95a5a6;
+            font-size: 16px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #bdc3c7;
+            font-weight: 500;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #e67e22;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .form-group input::placeholder {
+            color: #7f8c8d;
+        }
+        
+        .login-button {
+            width: 100%;
+            background: linear-gradient(45deg, #e67e22, #f39c12);
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            box-shadow: 0 10px 20px rgba(230, 126, 34, 0.3);
+        }
+        
+        .login-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(230, 126, 34, 0.4);
+        }
+        
+        .error-message {
+            background: rgba(231, 76, 60, 0.2);
+            color: #e74c3c;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(231, 76, 60, 0.3);
+            display: none;
+        }
+        
+        .illustration {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            border-radius: 50%;
+            opacity: 0.3;
+        }
+        
+        .illustration::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 30px;
+            height: 30px;
+            background: #fff;
+            border-radius: 50%;
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 480px) {
+            .login-container {
+                margin: 20px;
+                padding: 30px 20px;
+            }
+            
+            .logo h1 {
+                font-size: 28px;
+            }
+            
+            .login-title {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="illustration"></div>
+    
+    <div class="login-container">
+        <div class="logo">
+            <h1>SAGED</h1>
+            <p>نظام متابعة الحسابات الدراسية</p>
+        </div>
+        
+        <h2 class="login-title">تسجيل الدخول</h2>
+        <p class="login-subtitle">يرجى تسجيل الدخول أولاً لعرض البيانات</p>
+        
+        <div class="error-message" id="error-message"></div>
+        
+        <form id="login-form">
+            <div class="form-group">
+                <label for="email">البريد الإلكتروني</label>
+                <input type="email" id="email" name="email" placeholder="البريد الإلكتروني" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">كلمة المرور</label>
+                <input type="password" id="password" name="password" placeholder="كلمة المرور" required>
+            </div>
+            
+            <button type="submit" class="login-button">تسجيل الدخول</button>
+        </form>
+    </div>
+    
+    <script>
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('error-message');
+            
+            fetch('/api/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, password })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = '/';
+                } else {
+                    errorMessage.textContent = data.message || 'خطأ في تسجيل الدخول';
+                    errorMessage.style.display = 'block';
+                }
+            })
+            .catch(error => {
+                errorMessage.textContent = 'حدث خطأ في الاتصال';
+                errorMessage.style.display = 'block';
+            });
+        });
+    </script>
+</body>
+</html>
+
